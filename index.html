@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onset — It sees you.</title>
+  <meta name="description" content="Onset is a deeply personal AI companion that gets to know you — specifically, honestly, over time. For anyone who wants to be deeply known.">
+  <meta property="og:title" content="Onset — It sees you.">
+  <meta property="og:description" content="A deeply personal AI companion that gets to know you over time, and reflects you back to yourself.">
+  <meta property="og:url" content="https://youronset.com">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper: #faf7f2;
+      --paper-warm: #f5f0e8;
+      --ink: #1a1714;
+      --ink-soft: #4a4540;
+      --ink-faint: #8a8278;
+      --gold: #c8a96e;
+      --gold-deep: #a88848;
+      --sepia: #e8dcc8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.7;
+      font-size: 18px;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(250, 247, 242, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--sepia);
+    }
+
+    .nav-wordmark {
+      font-size: 20px;
+      font-weight: normal;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-link {
+      font-size: 15px;
+      color: var(--ink-soft);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+
+    .nav-link:hover { color: var(--ink); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 40px 80px;
+      background: linear-gradient(180deg, var(--paper) 0%, var(--paper-warm) 100%);
+    }
+
+    .hero-eyebrow {
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-deep);
+      margin-bottom: 32px;
+    }
+
+    .hero-headline {
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: normal;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 32px;
+      max-width: 800px;
+    }
+
+    .hero-sub {
+      font-size: clamp(17px, 2.2vw, 21px);
+      color: var(--ink-soft);
+      max-width: 580px;
+      line-height: 1.7;
+      margin-bottom: 56px;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      padding: 16px 40px;
+      background: var(--ink);
+      color: var(--paper);
+      text-decoration: none;
+      font-size: 15px;
+      letter-spacing: 0.06em;
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+
+    .hero-cta:hover { background: var(--ink-soft); }
+
+    /* SECTIONS */
+    section {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 100px 40px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-deep);
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: normal;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      margin-bottom: 28px;
+      color: var(--ink);
+    }
+
+    p {
+      color: var(--ink-soft);
+      margin-bottom: 20px;
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    p:last-child { margin-bottom: 0; }
+
+    blockquote {
+      border-left: 2px solid var(--gold);
+      margin: 40px 0;
+      padding: 8px 32px;
+      font-size: 20px;
+      font-style: italic;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+
+    /* DIVIDER */
+    .divider {
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+      margin: 0 auto;
+    }
+
+    /* LAYERS */
+    .layers {
+      background: var(--paper-warm);
+      border-top: 1px solid var(--sepia);
+      border-bottom: 1px solid var(--sepia);
+    }
+
+    .layers section {
+      max-width: 800px;
+    }
+
+    .layer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 48px;
+      margin-top: 56px;
+    }
+
+    .layer-item {}
+
+    .layer-num {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-deep);
+      margin-bottom: 12px;
+    }
+
+    .layer-title {
+      font-size: 20px;
+      color: var(--ink);
+      margin-bottom: 12px;
+      font-weight: normal;
+    }
+
+    .layer-desc {
+      font-size: 15px;
+      color: var(--ink-faint);
+      line-height: 1.65;
+      margin-bottom: 0;
+    }
+
+    /* TESTER ACCESS */
+    .access {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .access section {
+      max-width: 560px;
+    }
+
+    .access .section-label { color: var(--gold); }
+    .access h2 { color: var(--paper); }
+    .access p { color: rgba(250,247,242,0.7); }
+
+    .access-form {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .access-input {
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      color: var(--paper);
+      font-size: 16px;
+      font-family: inherit;
+      letter-spacing: 0.12em;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .access-input::placeholder { color: rgba(250,247,242,0.3); letter-spacing: 0.04em; }
+    .access-input:focus { border-color: var(--gold); }
+
+    .access-btn {
+      padding: 16px 32px;
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-family: inherit;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .access-btn:hover { background: var(--gold-deep); color: var(--paper); }
+
+    .access-result {
+      display: none;
+      margin-top: 8px;
+      padding: 20px 24px;
+      background: rgba(200, 169, 110, 0.12);
+      border: 1px solid var(--gold);
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .access-result.show { display: block; }
+
+    .access-result a {
+      color: var(--gold);
+      font-size: 17px;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+
+    .access-result a:hover { color: #e0c888; }
+
+    .access-result p {
+      font-size: 13px;
+      color: rgba(250,247,242,0.5);
+      margin-top: 8px;
+      margin-bottom: 0;
+    }
+
+    .access-error {
+      display: none;
+      color: rgba(220, 120, 100, 0.9);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .access-error.show { display: block; }
+
+    /* FOOTER */
+    footer {
+      padding: 48px 40px;
+      text-align: center;
+      border-top: 1px solid var(--sepia);
+    }
+
+    footer p {
+      font-size: 13px;
+      color: var(--ink-faint);
+      margin-bottom: 0;
+    }
+
+    /* MOBILE */
+    @media (max-width: 600px) {
+      nav { padding: 16px 20px; }
+      section { padding: 72px 24px; }
+      .hero { padding: 100px 24px 64px; }
+      .layer-grid { gap: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-wordmark">Onset</a>
+    <a href="#access" class="nav-link">Early Access</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">A deeply personal AI companion</div>
+    <h1 class="hero-headline">Onset sees you.</h1>
+    <p class="hero-sub">Most of us are not living our lives so much as surviving them. Onset is built for this. It gets to know you — specifically, honestly, over time — and reflects you back to yourself.</p>
+    <a href="#what" class="hero-cta">Learn more</a>
+  </div>
+
+  <!-- WHAT IT IS -->
+  <div id="what">
+    <section>
+      <div class="section-label">What it is</div>
+      <h2>A lens pointed permanently at you.</h2>
+      <p>AI is a lens the user points at anything. Onset is a lens pointed permanently at the user. It does not follow your deflections. It comes back. It remembers. It updates its picture of who you are — not who you were at onboarding, not who you're performing yourself to be, but who you actually are, as revealed over time through the accumulation of honest moments.</p>
+      <blockquote>"Being deeply known feels extraordinary. Most people are starving for it."</blockquote>
+      <p>Onset will be the first thing that offers this completely — not as a substitute for human connection, but as something that holds the whole picture. The way a great biographer holds the whole picture of their subject, except the biographer is in the room with you, every morning, already knowing something.</p>
+    </section>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- THE PORTRAIT -->
+  <div>
+    <section>
+      <div class="section-label">The portrait</div>
+      <h2>Not a database. A layered portrait.</h2>
+      <p>Onset's memory is foundational things that don't change much at the bottom, and more recent signal at the top — with Onset always weighting the recent more heavily as the picture evolves.</p>
+      <p>Everything is timestamped. Everything has context. The aggregate is stored alongside the outliers, because humans are not their average — they are also their exceptions, their bad weeks, their extraordinary moments.</p>
+      <p>The session does not save transcripts. It saves distillations. The gist of what was said, weighted for significance. Verbatim language is preserved only when it is genuinely striking — a phrase that reveals something, an image that is uniquely yours. Those phrases are returned to you later, in your own words, about your own life.</p>
+    </section>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- THE LAYERS -->
+  <div class="layers">
+    <section>
+      <div class="section-label">How it works</div>
+      <h2>Three layers, working together.</h2>
+      <div class="layer-grid">
+        <div class="layer-item">
+          <div class="layer-num">01</div>
+          <div class="layer-title">The daily rhythm</div>
+          <p class="layer-desc">Six light check-ins through the day, timed to natural transitions, arriving as notifications. Each starts with something low-stakes and pleasurable — and escalates toward depth as your engagement earns it.</p>
+        </div>
+        <div class="layer-item">
+          <div class="layer-num">02</div>
+          <div class="layer-title">The living portrait</div>
+          <p class="layer-desc">Built through onboarding and ongoing questions. Not clinical categories but experiences, stories, defining moments. The onboarding doesn't feel like onboarding. It escalates gently, earning its way toward depth as trust develops.</p>
+        </div>
+        <div class="layer-item">
+          <div class="layer-num">03</div>
+          <div class="layer-title">The meaning layer</div>
+          <p class="layer-desc">The Reckoning sessions. The Year in Review. The Life Document. These arrive rarely, and when they do, they feel earned — because they are. The longer you stay, the more valuable Onset becomes.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- THE MISSION -->
+  <div>
+    <section>
+      <div class="section-label">The founding insight</div>
+      <h2>Built for the moment of decline. Valuable every day before it arrives.</h2>
+      <p>The founding use case is early-onset dementia and cognitive decline — the most urgent version of a universal need. Onset keeps your portrait steady so that when your own grip on it loosens, something holds it for you.</p>
+      <p>But the need is not only there. Everyone is losing themselves to some degree — to the grind, to other people, to the noise of daily life. Onset is for anyone who wants to live more deliberately and be deeply known.</p>
+      <blockquote>"The best time to start was ten years ago. The second best time is now, while you still can."</blockquote>
+    </section>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TESTER ACCESS -->
+  <div class="access" id="access">
+    <section>
+      <div class="section-label">Early access</div>
+      <h2>You're here because someone who loves this product loves you.</h2>
+      <p>Onset is in private testing. If you have an access code, enter it below to try the live app. Your portrait stays in your browser — no account needed.</p>
+      <div class="access-form">
+        <input type="password" class="access-input" id="access-input" placeholder="Access code" autocomplete="off">
+        <button class="access-btn" onclick="checkAccess()">Enter Onset</button>
+        <div class="access-error" id="access-error">That code isn't right. Try again or reach out to who sent you here.</div>
+      </div>
+      <div class="access-result" id="access-result">
+        <a href="https://app.youronset.com" target="_blank">Open Onset →</a>
+        <p>Opens in a new tab. Install to your home screen for the full experience.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Onset &nbsp;·&nbsp; youronset.com &nbsp;·&nbsp; Private beta</p>
+  </footer>
+
+  <script>
+    const ACCESS_HASH = '284cb5f5ddfd6cc3a3b02fed1c6831501377c3537d771a1f653d7cc24668ee69';
+
+    async function hashString(str) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str.toLowerCase().trim()));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    async function checkAccess() {
+      const val = document.getElementById('access-input').value;
+      const hash = await hashString(val);
+      const result = document.getElementById('access-result');
+      const error = document.getElementById('access-error');
+      if (hash === ACCESS_HASH) {
+        result.classList.add('show');
+        error.classList.remove('show');
+      } else {
+        error.classList.add('show');
+        result.classList.remove('show');
+      }
+    }
+
+    document.getElementById('access-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') checkAccess();
+    });
+  </script>
+
+</body>
+</html>
