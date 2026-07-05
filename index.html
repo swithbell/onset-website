@@ -8,28 +8,33 @@
   <meta property="og:title" content="Onset — It sees you.">
   <meta property="og:description" content="A deeply personal AI companion that gets to know you over time, and reflects you back to yourself.">
   <meta property="og:url" content="https://youronset.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --paper: #faf7f2;
-      --paper-warm: #f5f0e8;
-      --ink: #1a1714;
+      --paper: #faf8f4;
+      --paper-warm: #f4f0e8;
+      --paper-deep: #ede7da;
+      --ink: #1c1814;
       --ink-soft: #4a4540;
       --ink-faint: #8a8278;
       --gold: #c8a96e;
-      --gold-deep: #a88848;
-      --sepia: #e8dcc8;
+      --gold-deep: #a08040;
+      --sepia: #e4dccb;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Georgia', 'Times New Roman', serif;
+      font-family: 'DM Sans', system-ui, sans-serif;
       background: var(--paper);
       color: var(--ink);
-      line-height: 1.7;
-      font-size: 18px;
+      line-height: 1.65;
+      font-size: 17px;
+      font-weight: 400;
     }
 
     /* NAV */
@@ -37,31 +42,50 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      padding: 20px 40px;
+      padding: 18px 48px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(250, 247, 242, 0.92);
-      backdrop-filter: blur(8px);
+      background: rgba(250, 248, 244, 0.94);
+      backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--sepia);
     }
 
-    .nav-wordmark {
-      font-size: 20px;
-      font-weight: normal;
-      letter-spacing: 0.08em;
-      color: var(--ink);
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       text-decoration: none;
+    }
+
+    .nav-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      object-fit: cover;
+    }
+
+    .nav-wordmark {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 19px;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      color: var(--ink);
     }
 
     .nav-link {
-      font-size: 15px;
+      font-size: 14px;
+      font-weight: 400;
       color: var(--ink-soft);
       text-decoration: none;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
+      padding: 8px 20px;
+      border: 1px solid var(--sepia);
+      border-radius: 20px;
+      transition: all 0.18s;
     }
 
-    .nav-link:hover { color: var(--ink); }
+    .nav-link:hover { border-color: var(--gold); color: var(--ink); }
 
     /* HERO */
     .hero {
@@ -72,42 +96,52 @@
       align-items: center;
       text-align: center;
       padding: 120px 40px 80px;
-      background: linear-gradient(180deg, var(--paper) 0%, var(--paper-warm) 100%);
+    }
+
+    .hero-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 22px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.07);
+      margin-bottom: 36px;
     }
 
     .hero-eyebrow {
-      font-size: 13px;
-      letter-spacing: 0.18em;
+      font-size: 12px;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--gold-deep);
-      margin-bottom: 32px;
+      margin-bottom: 28px;
+      font-weight: 500;
     }
 
     .hero-headline {
-      font-size: clamp(48px, 8vw, 96px);
-      font-weight: normal;
+      font-family: 'Lora', Georgia, serif;
+      font-size: clamp(52px, 8vw, 100px);
+      font-weight: 400;
       line-height: 1.05;
       letter-spacing: -0.02em;
       color: var(--ink);
-      margin-bottom: 32px;
-      max-width: 800px;
+      margin-bottom: 28px;
     }
 
     .hero-sub {
-      font-size: clamp(17px, 2.2vw, 21px);
+      font-size: clamp(16px, 2vw, 20px);
       color: var(--ink-soft);
-      max-width: 580px;
-      line-height: 1.7;
-      margin-bottom: 56px;
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: 52px;
+      font-weight: 300;
     }
 
     .hero-cta {
       display: inline-block;
-      padding: 16px 40px;
+      padding: 15px 40px;
       background: var(--ink);
       color: var(--paper);
       text-decoration: none;
-      font-size: 15px;
+      font-size: 14px;
+      font-weight: 500;
       letter-spacing: 0.06em;
       border-radius: 2px;
       transition: background 0.2s;
@@ -116,24 +150,26 @@
     .hero-cta:hover { background: var(--ink-soft); }
 
     /* SECTIONS */
-    section {
-      max-width: 720px;
+    .wrap {
+      max-width: 680px;
       margin: 0 auto;
-      padding: 100px 40px;
+      padding: 96px 40px;
     }
 
     .section-label {
-      font-size: 12px;
-      letter-spacing: 0.2em;
+      font-size: 11px;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--gold-deep);
-      margin-bottom: 24px;
+      margin-bottom: 22px;
+      font-weight: 500;
     }
 
     h2 {
-      font-size: clamp(28px, 4vw, 42px);
-      font-weight: normal;
-      line-height: 1.2;
+      font-family: 'Lora', Georgia, serif;
+      font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 400;
+      line-height: 1.22;
       letter-spacing: -0.01em;
       margin-bottom: 28px;
       color: var(--ink);
@@ -143,7 +179,8 @@
       color: var(--ink-soft);
       margin-bottom: 20px;
       font-size: 17px;
-      line-height: 1.75;
+      line-height: 1.78;
+      font-weight: 300;
     }
 
     p:last-child { margin-bottom: 0; }
@@ -151,40 +188,31 @@
     blockquote {
       border-left: 2px solid var(--gold);
       margin: 40px 0;
-      padding: 8px 32px;
+      padding: 4px 28px;
+      font-family: 'Lora', Georgia, serif;
       font-size: 20px;
       font-style: italic;
       color: var(--ink-soft);
       line-height: 1.6;
     }
 
-    /* DIVIDER */
-    .divider {
-      width: 48px;
-      height: 1px;
-      background: var(--gold);
-      margin: 0 auto;
-    }
+    .rule { width: 40px; height: 1px; background: var(--gold); margin: 0 auto; }
 
     /* LAYERS */
-    .layers {
+    .layers-band {
       background: var(--paper-warm);
       border-top: 1px solid var(--sepia);
       border-bottom: 1px solid var(--sepia);
     }
 
-    .layers section {
-      max-width: 800px;
-    }
+    .layers-band .wrap { max-width: 880px; }
 
     .layer-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 48px;
-      margin-top: 56px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 44px;
+      margin-top: 52px;
     }
-
-    .layer-item {}
 
     .layer-num {
       font-size: 11px;
@@ -192,232 +220,268 @@
       text-transform: uppercase;
       color: var(--gold-deep);
       margin-bottom: 12px;
+      font-weight: 500;
     }
 
     .layer-title {
-      font-size: 20px;
+      font-family: 'Lora', Georgia, serif;
+      font-size: 19px;
       color: var(--ink);
       margin-bottom: 12px;
-      font-weight: normal;
+      font-weight: 400;
     }
 
     .layer-desc {
       font-size: 15px;
       color: var(--ink-faint);
-      line-height: 1.65;
+      line-height: 1.7;
+      font-weight: 300;
       margin-bottom: 0;
     }
 
-    /* TESTER ACCESS */
-    .access {
-      background: var(--ink);
-      color: var(--paper);
+    /* PRIVACY */
+    .privacy-band {
+      background: var(--paper-deep);
+      border-top: 1px solid var(--sepia);
+      border-bottom: 1px solid var(--sepia);
     }
 
-    .access section {
-      max-width: 560px;
+    .privacy-band .wrap {
+      text-align: center;
+      padding: 72px 40px;
     }
 
-    .access .section-label { color: var(--gold); }
-    .access h2 { color: var(--paper); }
-    .access p { color: rgba(250,247,242,0.7); }
-
-    .access-form {
-      margin-top: 40px;
+    .privacy-items {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
+      margin-top: 36px;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+
+    .privacy-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 15px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .privacy-dot {
+      flex-shrink: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin-top: 7px;
+    }
+
+    /* ACCESS */
+    .access-band { background: var(--ink); }
+
+    .access-band .wrap { max-width: 520px; text-align: center; }
+    .access-band .section-label { color: var(--gold); }
+    .access-band h2 { color: var(--paper); font-size: clamp(22px, 3vw, 34px); }
+    .access-band > .wrap > p { color: rgba(250,248,244,0.6); font-size: 16px; }
+
+    .access-form {
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .access-input {
       width: 100%;
       padding: 16px 20px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 4px;
       color: var(--paper);
       font-size: 16px;
-      font-family: inherit;
-      letter-spacing: 0.12em;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.1em;
       outline: none;
+      text-align: center;
       transition: border-color 0.2s;
     }
 
-    .access-input::placeholder { color: rgba(250,247,242,0.3); letter-spacing: 0.04em; }
+    .access-input::placeholder { color: rgba(250,248,244,0.25); letter-spacing: 0.04em; }
     .access-input:focus { border-color: var(--gold); }
 
     .access-btn {
-      padding: 16px 32px;
+      padding: 16px;
       background: var(--gold);
       color: var(--ink);
       border: none;
       border-radius: 4px;
-      font-size: 15px;
-      font-family: inherit;
-      letter-spacing: 0.06em;
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.07em;
       cursor: pointer;
       transition: background 0.2s;
     }
 
-    .access-btn:hover { background: var(--gold-deep); color: var(--paper); }
+    .access-btn:hover { background: #d4b87e; }
 
     .access-result {
       display: none;
-      margin-top: 8px;
-      padding: 20px 24px;
-      background: rgba(200, 169, 110, 0.12);
-      border: 1px solid var(--gold);
+      margin-top: 4px;
+      padding: 24px;
+      background: rgba(200,169,110,0.1);
+      border: 1px solid rgba(200,169,110,0.35);
       border-radius: 4px;
-      text-align: center;
     }
 
     .access-result.show { display: block; }
 
     .access-result a {
+      font-family: 'Lora', serif;
       color: var(--gold);
-      font-size: 17px;
+      font-size: 20px;
+      font-style: italic;
       text-decoration: none;
-      letter-spacing: 0.04em;
     }
 
-    .access-result a:hover { color: #e0c888; }
+    .access-result a:hover { color: #d4b87e; }
+    .access-result p { font-size: 13px; color: rgba(250,248,244,0.4); margin-top: 10px; }
 
-    .access-result p {
-      font-size: 13px;
-      color: rgba(250,247,242,0.5);
-      margin-top: 8px;
-      margin-bottom: 0;
-    }
-
-    .access-error {
-      display: none;
-      color: rgba(220, 120, 100, 0.9);
-      font-size: 14px;
-      margin-top: 4px;
-    }
-
+    .access-error { display: none; color: rgba(220,110,90,0.85); font-size: 14px; }
     .access-error.show { display: block; }
 
-    /* FOOTER */
     footer {
-      padding: 48px 40px;
+      padding: 40px;
       text-align: center;
       border-top: 1px solid var(--sepia);
     }
 
-    footer p {
-      font-size: 13px;
-      color: var(--ink-faint);
-      margin-bottom: 0;
-    }
+    footer p { font-size: 13px; color: var(--ink-faint); font-weight: 300; }
 
-    /* MOBILE */
     @media (max-width: 600px) {
-      nav { padding: 16px 20px; }
-      section { padding: 72px 24px; }
-      .hero { padding: 100px 24px 64px; }
-      .layer-grid { gap: 36px; }
+      nav { padding: 14px 20px; }
+      .wrap { padding: 64px 24px; }
+      .hero { padding: 100px 24px 60px; }
+      .layer-grid { gap: 32px; }
     }
   </style>
 </head>
 <body>
 
   <nav>
-    <a href="#" class="nav-wordmark">Onset</a>
+    <a href="#" class="nav-brand">
+      <img src="icon.png" alt="" class="nav-icon">
+      <span class="nav-wordmark">Onset</span>
+    </a>
     <a href="#access" class="nav-link">Early Access</a>
   </nav>
 
-  <!-- HERO -->
   <div class="hero">
+    <img src="icon.png" alt="Onset" class="hero-icon">
     <div class="hero-eyebrow">A deeply personal AI companion</div>
     <h1 class="hero-headline">Onset sees you.</h1>
-    <p class="hero-sub">Most of us are not living our lives so much as surviving them. Onset is built for this. It gets to know you — specifically, honestly, over time — and reflects you back to yourself.</p>
+    <p class="hero-sub">Most of us are not living our lives so much as surviving them. Onset is built for this — a companion that gets to know you specifically, honestly, over time, and reflects you back to yourself.</p>
     <a href="#what" class="hero-cta">Learn more</a>
   </div>
 
-  <!-- WHAT IT IS -->
   <div id="what">
-    <section>
+    <div class="wrap">
       <div class="section-label">What it is</div>
       <h2>A lens pointed permanently at you.</h2>
       <p>AI is a lens the user points at anything. Onset is a lens pointed permanently at the user. It does not follow your deflections. It comes back. It remembers. It updates its picture of who you are — not who you were at onboarding, not who you're performing yourself to be, but who you actually are, as revealed over time through the accumulation of honest moments.</p>
       <blockquote>"Being deeply known feels extraordinary. Most people are starving for it."</blockquote>
       <p>Onset will be the first thing that offers this completely — not as a substitute for human connection, but as something that holds the whole picture. The way a great biographer holds the whole picture of their subject, except the biographer is in the room with you, every morning, already knowing something.</p>
-    </section>
+    </div>
   </div>
 
-  <div class="divider"></div>
+  <div class="rule"></div>
 
-  <!-- THE PORTRAIT -->
   <div>
-    <section>
+    <div class="wrap">
       <div class="section-label">The portrait</div>
       <h2>Not a database. A layered portrait.</h2>
-      <p>Onset's memory is foundational things that don't change much at the bottom, and more recent signal at the top — with Onset always weighting the recent more heavily as the picture evolves.</p>
-      <p>Everything is timestamped. Everything has context. The aggregate is stored alongside the outliers, because humans are not their average — they are also their exceptions, their bad weeks, their extraordinary moments.</p>
-      <p>The session does not save transcripts. It saves distillations. The gist of what was said, weighted for significance. Verbatim language is preserved only when it is genuinely striking — a phrase that reveals something, an image that is uniquely yours. Those phrases are returned to you later, in your own words, about your own life.</p>
-    </section>
+      <p>Onset's memory is foundational things that don't change much at the bottom, and more recent signal at the top — always weighting the recent more heavily as the picture evolves. Everything is timestamped. Everything has context.</p>
+      <p>The aggregate is stored alongside the outliers, because humans are not their average — they are also their exceptions, their bad weeks, their extraordinary moments. The session does not save transcripts. It saves distillations. Verbatim language is preserved only when it is genuinely striking — a phrase that reveals something, an image that is uniquely yours. Those phrases come back to you later, in your own words, about your own life.</p>
+    </div>
   </div>
 
-  <div class="divider"></div>
+  <div class="rule"></div>
 
-  <!-- THE LAYERS -->
-  <div class="layers">
-    <section>
+  <div class="layers-band">
+    <div class="wrap">
       <div class="section-label">How it works</div>
-      <h2>Three layers, working together.</h2>
+      <h2>Four layers, working together.</h2>
       <div class="layer-grid">
-        <div class="layer-item">
+        <div>
           <div class="layer-num">01</div>
           <div class="layer-title">The daily rhythm</div>
-          <p class="layer-desc">Six light check-ins through the day, timed to natural transitions, arriving as notifications. Each starts with something low-stakes and pleasurable — and escalates toward depth as your engagement earns it.</p>
+          <p class="layer-desc">Up to four light check-ins through the day, timed to natural transitions. Each starts with something easy and pleasurable, and earns its way toward depth as your engagement invites it.</p>
         </div>
-        <div class="layer-item">
+        <div>
           <div class="layer-num">02</div>
           <div class="layer-title">The living portrait</div>
-          <p class="layer-desc">Built through onboarding and ongoing questions. Not clinical categories but experiences, stories, defining moments. The onboarding doesn't feel like onboarding. It escalates gently, earning its way toward depth as trust develops.</p>
+          <p class="layer-desc">Built through onboarding and ongoing questions — not clinical categories, but experiences, stories, defining moments. The onboarding doesn't feel like onboarding. It escalates gently as trust develops.</p>
         </div>
-        <div class="layer-item">
+        <div>
           <div class="layer-num">03</div>
           <div class="layer-title">The meaning layer</div>
-          <p class="layer-desc">The Reckoning sessions. The Year in Review. The Life Document. These arrive rarely, and when they do, they feel earned — because they are. The longer you stay, the more valuable Onset becomes.</p>
+          <p class="layer-desc">Periodic deeper sessions — the kind of productive discomfort that happens when you've been circling something for a while and finally say the thing. The Reckoning. The Year in Review. These arrive when earned.</p>
+        </div>
+        <div>
+          <div class="layer-num">04</div>
+          <div class="layer-title">The moving mirror</div>
+          <p class="layer-desc">When your portrait has enough depth, Onset renders it as something you can hear and watch — a short audio-visual artifact assembled from your own material. The mirror held up when the light is exactly right.</p>
         </div>
       </div>
-    </section>
+    </div>
   </div>
 
-  <!-- THE MISSION -->
+  <div class="privacy-band">
+    <div class="wrap">
+      <div class="section-label">Your portrait is yours</div>
+      <h2>Nobody sees what you tell Onset.</h2>
+      <p>Onset is not a social product. There are no feeds, no sharing, no algorithms that monetize your attention. What you say stays with you.</p>
+      <div class="privacy-items">
+        <div class="privacy-item"><div class="privacy-dot"></div>Your responses are never seen by another person</div>
+        <div class="privacy-item"><div class="privacy-dot"></div>Your portrait lives in your own browser — not a server, not a profile</div>
+        <div class="privacy-item"><div class="privacy-dot"></div>No account required. No password to forget. No data to breach.</div>
+        <div class="privacy-item"><div class="privacy-dot"></div>You can export or erase your portrait at any time, completely</div>
+      </div>
+    </div>
+  </div>
+
   <div>
-    <section>
-      <div class="section-label">The founding insight</div>
-      <h2>Built for the moment of decline. Valuable every day before it arrives.</h2>
-      <p>The founding use case is early-onset dementia and cognitive decline — the most urgent version of a universal need. Onset keeps your portrait steady so that when your own grip on it loosens, something holds it for you.</p>
-      <p>But the need is not only there. Everyone is losing themselves to some degree — to the grind, to other people, to the noise of daily life. Onset is for anyone who wants to live more deliberately and be deeply known.</p>
+    <div class="wrap">
+      <div class="section-label">Built for the long arc</div>
+      <h2>For the moment of decline. Valuable every day before it arrives.</h2>
+      <p>The founding use case is early-onset cognitive decline — the most urgent version of a universal need. Onset keeps your portrait steady so that when your own grip on it loosens, something holds it for you. Something that says every morning: you are still here. Here is who you are. Your life was worth living.</p>
+      <p>But the need is not only there. Everyone is losing themselves to some degree. Onset is for anyone who wants to live more deliberately, and be deeply known.</p>
       <blockquote>"The best time to start was ten years ago. The second best time is now, while you still can."</blockquote>
-    </section>
+    </div>
   </div>
 
-  <div class="divider"></div>
-
-  <!-- TESTER ACCESS -->
-  <div class="access" id="access">
-    <section>
+  <div class="access-band" id="access">
+    <div class="wrap">
       <div class="section-label">Early access</div>
       <h2>You're here because someone who loves this product loves you.</h2>
-      <p>Onset is in private testing. If you have an access code, enter it below to try the live app. Your portrait stays in your browser — no account needed.</p>
+      <p>Onset is in private testing. If you have an access code, enter it below. Your portrait stays in your browser — no account, no signup.</p>
       <div class="access-form">
-        <input type="password" class="access-input" id="access-input" placeholder="Access code" autocomplete="off">
-        <button class="access-btn" onclick="checkAccess()">Enter Onset</button>
-        <div class="access-error" id="access-error">That code isn't right. Try again or reach out to who sent you here.</div>
+        <input type="password" class="access-input" id="access-input" placeholder="Access code" autocomplete="off" spellcheck="false">
+        <button class="access-btn" onclick="checkAccess()">Enter Onset →</button>
+        <div class="access-error" id="access-error">That code isn't right. Check with who sent you here.</div>
       </div>
       <div class="access-result" id="access-result">
         <a href="https://app.youronset.com" target="_blank">Open Onset →</a>
-        <p>Opens in a new tab. Install to your home screen for the full experience.</p>
+        <p>Opens in a new tab. On iPhone: tap Share → Add to Home Screen for the full experience.</p>
       </div>
-    </section>
+    </div>
   </div>
 
-  <!-- FOOTER -->
   <footer>
     <p>Onset &nbsp;·&nbsp; youronset.com &nbsp;·&nbsp; Private beta</p>
   </footer>
