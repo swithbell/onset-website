@@ -536,11 +536,13 @@
     <div class="wrap">
       <div class="section-label">Early access</div>
       <h2>You're here because someone who loves this product loves you.</h2>
-      <p>Onset is in private testing. If you have an access code, enter it below. Your portrait stays in your browser — no account, no signup.</p>
+      <p>Onset is in private testing. If you have an access code, enter your email and the code below.</p>
       <div class="access-form">
+        <input type="email" class="access-input" id="access-email" placeholder="Your email address" autocomplete="email" spellcheck="false">
         <input type="password" class="access-input" id="access-input" placeholder="Access code" autocomplete="off" spellcheck="false">
         <button class="access-btn" onclick="checkAccess()">Enter Onset →</button>
         <div class="access-error" id="access-error">That code isn't right. Check with who sent you here.</div>
+        <div class="access-error" id="access-email-error">Please enter your email address.</div>
       </div>
       <div class="access-result" id="access-result">
         <a href="https://app.youronset.com" target="_blank">Open Onset →</a>
@@ -562,13 +564,34 @@
     }
 
     async function checkAccess() {
+      const email = document.getElementById('access-email').value.trim();
       const val = document.getElementById('access-input').value;
       const hash = await hashString(val);
       const result = document.getElementById('access-result');
       const error = document.getElementById('access-error');
+      const emailError = document.getElementById('access-email-error');
+
+      emailError.classList.remove('show');
+      error.classList.remove('show');
+
+      if (!email || !email.includes('@')) {
+        emailError.classList.add('show');
+        return;
+      }
+
       if (hash === ACCESS_HASH) {
         result.classList.add('show');
-        error.classList.remove('show');
+        // Notify — first submission triggers a one-time activation email from Formsubmit
+        fetch('https://formsubmit.co/ajax/swithbell@icloud.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            _subject: 'Onset tester accessed the app',
+            _template: 'box',
+            message: 'Someone accessed Onset using the tester code. Email: ' + email
+          })
+        }).catch(() => {}); // silent fail — don't block the user if notify fails
       } else {
         error.classList.add('show');
         result.classList.remove('show');
@@ -577,6 +600,9 @@
 
     document.getElementById('access-input').addEventListener('keydown', e => {
       if (e.key === 'Enter') checkAccess();
+    });
+    document.getElementById('access-email').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('access-input').focus();
     });
   </script>
 
