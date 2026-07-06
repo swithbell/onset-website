@@ -15,15 +15,15 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --paper: #faf8f4;
-      --paper-warm: #f4f0e8;
-      --paper-deep: #ede7da;
+      --paper: #ece4d2;
+      --paper-warm: #e4d9c6;
+      --paper-deep: #d8ccb5;
       --ink: #1c1814;
       --ink-soft: #4a4540;
       --ink-faint: #8a8278;
       --gold: #c8a96e;
-      --gold-deep: #a08040;
-      --sepia: #e4dccb;
+      --gold-deep: #9a7a38;
+      --sepia: #c8b898;
     }
 
     html { scroll-behavior: smooth; }
@@ -46,9 +46,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(250, 248, 244, 0.94);
+      background: rgba(236, 228, 210, 0.96);
       backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--sepia);
+      border-bottom: 1px solid rgba(180, 158, 110, 0.22);
     }
 
     .nav-brand {
@@ -98,33 +98,31 @@
       padding: 120px 40px 80px;
       position: relative;
       overflow: hidden;
+      background: radial-gradient(ellipse 70% 60% at 50% 48%, #f0e4c8 0%, var(--paper) 70%);
     }
 
-    /* Large ghosted monad behind hero content */
+    /* Contour texture in hero */
     .hero::before {
       content: '';
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: min(70vw, 600px);
-      height: min(70vw, 600px);
-      border-radius: 50%;
-      border: 1.5px solid rgba(200, 169, 110, 0.18);
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Cg fill='none' stroke='%23c8a96e' stroke-width='0.9' opacity='0.18'%3E%3Cpath d='M-20,80 C40,60 80,100 140,75 C200,50 240,90 300,70 C360,50 390,80 420,65'/%3E%3Cpath d='M-20,105 C50,82 90,125 150,98 C210,72 250,112 310,90 C370,68 395,100 425,85'/%3E%3Cpath d='M-20,130 C60,105 100,148 158,122 C216,96 258,136 318,112 C378,88 400,120 428,106'/%3E%3Cpath d='M-20,155 C70,128 108,170 165,146 C222,120 265,160 325,135 C385,110 405,140 430,128'/%3E%3Cpath d='M-20,180 C80,152 115,192 172,170 C229,146 272,184 330,160 C388,136 408,162 432,150'/%3E%3Cpath d='M-20,205 C90,178 122,215 180,194 C238,172 280,208 336,186 C392,164 410,185 434,174'/%3E%3Cpath d='M-20,230 C100,204 130,238 188,218 C246,198 288,232 342,212 C396,192 412,208 436,198'/%3E%3Cpath d='M-20,55 C30,38 70,75 128,52 C186,28 228,68 290,48 C352,28 382,58 415,44'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 400px 300px;
       pointer-events: none;
       z-index: 0;
     }
 
+    /* Large monad ring */
     .hero::after {
       content: '';
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      width: 10px;
-      height: 10px;
+      transform: translate(-50%, -42%);
+      width: min(72vw, 620px);
+      height: min(72vw, 620px);
       border-radius: 50%;
-      background: rgba(200, 169, 110, 0.22);
+      border: 1.5px solid rgba(160, 128, 64, 0.32);
       pointer-events: none;
       z-index: 0;
     }
@@ -132,12 +130,13 @@
     .hero > * { position: relative; z-index: 1; }
 
     .hero-icon {
-      width: 96px;
-      height: 96px;
+      width: 104px;
+      height: 104px;
       border-radius: 24px;
       object-fit: cover;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+      box-shadow: 0 6px 28px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
       margin-bottom: 36px;
+      display: block;
     }
 
     .hero-eyebrow {
