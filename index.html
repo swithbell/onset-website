@@ -8,6 +8,9 @@
   <meta property="og:title" content="Onset — It sees you.">
   <meta property="og:description" content="A deeply personal AI companion that gets to know you over time, and reflects you back to yourself.">
   <meta property="og:url" content="https://youronset.com">
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -59,10 +62,9 @@
     }
 
     .nav-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 7px;
-      object-fit: cover;
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
     }
 
     .nav-wordmark {
@@ -101,13 +103,17 @@
       background: radial-gradient(ellipse 70% 60% at 50% 48%, #f0e4c8 0%, var(--paper) 70%);
     }
 
-    /* Contour texture in hero */
+    /* Neural texture in hero — hand-wobbled axons + synapse nodes.
+       Masked to fade out behind the headline so text stays clean. */
     .hero::before {
       content: '';
       position: absolute;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Cg fill='none' stroke='%23c8a96e' stroke-width='0.9' opacity='0.18'%3E%3Cpath d='M-20,80 C40,60 80,100 140,75 C200,50 240,90 300,70 C360,50 390,80 420,65'/%3E%3Cpath d='M-20,105 C50,82 90,125 150,98 C210,72 250,112 310,90 C370,68 395,100 425,85'/%3E%3Cpath d='M-20,130 C60,105 100,148 158,122 C216,96 258,136 318,112 C378,88 400,120 428,106'/%3E%3Cpath d='M-20,155 C70,128 108,170 165,146 C222,120 265,160 325,135 C385,110 405,140 430,128'/%3E%3Cpath d='M-20,180 C80,152 115,192 172,170 C229,146 272,184 330,160 C388,136 408,162 432,150'/%3E%3Cpath d='M-20,205 C90,178 122,215 180,194 C238,172 280,208 336,186 C392,164 410,185 434,174'/%3E%3Cpath d='M-20,230 C100,204 130,238 188,218 C246,198 288,232 342,212 C396,192 412,208 436,198'/%3E%3Cpath d='M-20,55 C30,38 70,75 128,52 C186,28 228,68 290,48 C352,28 382,58 415,44'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 400px 300px;
+      background-image: url("neurons-light.svg");
+      background-size: cover;
+      background-position: center;
+      -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 46%, transparent 12%, #000 72%);
+      mask-image: radial-gradient(ellipse 62% 58% at 50% 46%, transparent 12%, #000 72%);
       pointer-events: none;
       z-index: 0;
     }
@@ -115,12 +121,13 @@
     .hero > * { position: relative; z-index: 1; }
 
     .hero-mark {
-      width: 160px;
-      height: 160px;
-      margin-bottom: 28px;
+      width: 168px;
+      height: 168px;
+      margin-bottom: 30px;
       display: block;
+      /* onset-o.png — the Onset O: the serif letterform with the real
+         hand-inked (raw, imperfect) pupil dropped into its counter. The eye. */
       mix-blend-mode: multiply;
-      opacity: 0.88;
     }
 
     .hero-eyebrow {
@@ -225,36 +232,23 @@
 
     #what .wrap { max-width: 860px; }
 
-    /* Contour texture overlay for bands */
+    /* LAYERS — kept clean (no texture) so the neural motif reads as an accent,
+       bookending the page at hero + access rather than appearing everywhere. */
     .layers-band {
       position: relative;
-    }
-
-    .layers-band::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Cg fill='none' stroke='%23c8a96e' stroke-width='0.8' opacity='0.12'%3E%3Cpath d='M-20,80 C40,60 80,100 140,75 C200,50 240,90 300,70 C360,50 390,80 420,65'/%3E%3Cpath d='M-20,105 C50,82 90,125 150,98 C210,72 250,112 310,90 C370,68 395,100 425,85'/%3E%3Cpath d='M-20,130 C60,105 100,148 158,122 C216,96 258,136 318,112 C378,88 400,120 428,106'/%3E%3Cpath d='M-20,155 C70,128 108,170 165,146 C222,120 265,160 325,135 C385,110 405,140 430,128'/%3E%3Cpath d='M-20,180 C80,152 115,192 172,170 C229,146 272,184 330,160 C388,136 408,162 432,150'/%3E%3Cpath d='M-20,205 C90,178 122,215 180,194 C238,172 280,208 336,186 C392,164 410,185 434,174'/%3E%3Cpath d='M-20,230 C100,204 130,238 188,218 C246,198 288,232 342,212 C396,192 412,208 436,198'/%3E%3Cpath d='M-20,55 C30,38 70,75 128,52 C186,28 228,68 290,48 C352,28 382,58 415,44'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 400px 300px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .layers-band .wrap { position: relative; z-index: 1; }
-
-    /* LAYERS */
-    .layers-band {
       background: var(--paper-warm);
       border-top: 1px solid var(--sepia);
       border-bottom: 1px solid var(--sepia);
     }
 
+    .layers-band .wrap { position: relative; z-index: 1; }
+
     .layers-band .wrap { max-width: 880px; }
 
     .layer-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 44px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 44px 56px;
       margin-top: 52px;
     }
 
@@ -325,10 +319,27 @@
       margin-top: 7px;
     }
 
-    /* ACCESS */
-    .access-band { background: var(--ink); }
+    /* ACCESS — the neural showpiece. Synapses glow gold on dark ink. */
+    .access-band {
+      background: var(--ink);
+      position: relative;
+      overflow: hidden;
+    }
 
-    .access-band .wrap { max-width: 520px; text-align: center; }
+    .access-band::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("neurons-glow.svg");
+      background-size: cover;
+      background-position: center;
+      -webkit-mask-image: radial-gradient(ellipse 80% 90% at 50% 50%, #000 30%, transparent 92%);
+      mask-image: radial-gradient(ellipse 80% 90% at 50% 50%, #000 30%, transparent 92%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .access-band .wrap { max-width: 520px; text-align: center; position: relative; z-index: 1; }
     .access-band .section-label { color: var(--gold); }
     .access-band h2 { color: var(--paper); font-size: clamp(22px, 3vw, 34px); }
     .access-band > .wrap > p { color: rgba(250,248,244,0.6); font-size: 16px; }
@@ -419,14 +430,14 @@
 
   <nav>
     <a href="#" class="nav-brand">
-      <img src="icon.png" alt="" class="nav-icon">
+      <img src="onset-o.png" alt="" class="nav-icon">
       <span class="nav-wordmark">Onset</span>
     </a>
     <a href="#access" class="nav-link">Early Access</a>
   </nav>
 
   <div class="hero">
-    <img src="enso.jpg" alt="" class="hero-mark">
+    <img src="onset-o.png" alt="" class="hero-mark">
     <h1 class="hero-headline">Onset sees you.</h1>
     <p class="hero-sub">Most of us are not living our lives so much as surviving them. We've lost touch with our truest self and highest aim. Onset is built for this. It gets to know you — specifically, honestly, over time — and realigns you back with yourself.</p>
     <a href="#what" class="hero-cta">Learn more</a>
@@ -501,9 +512,9 @@
       <p>Onset is not a social product. There are no feeds, no sharing, no algorithms that monetize your attention. What you say stays with you.</p>
       <div class="privacy-items">
         <div class="privacy-item"><div class="privacy-dot"></div>Your responses are never seen by another person</div>
-        <div class="privacy-item"><div class="privacy-dot"></div>Your portrait lives in your own browser — not a server, not a profile</div>
-        <div class="privacy-item"><div class="privacy-dot"></div>No account required. No password to forget. No data to breach.</div>
+        <div class="privacy-item"><div class="privacy-dot"></div>Your portrait is yours alone — never sold, never shared</div>
         <div class="privacy-item"><div class="privacy-dot"></div>You can export or erase your portrait at any time, completely</div>
+        <div class="privacy-item"><div class="privacy-dot"></div>Everything Onset makes for you can be downloaded — yours to keep, forever</div>
       </div>
     </div>
   </div>
