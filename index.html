@@ -112,29 +112,11 @@
       z-index: 0;
     }
 
-    /* Large monad ring */
-    .hero::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -42%);
-      width: min(72vw, 620px);
-      height: min(72vw, 620px);
-      border-radius: 50%;
-      border: 1.5px solid rgba(160, 128, 64, 0.32);
-      pointer-events: none;
-      z-index: 0;
-    }
-
     .hero > * { position: relative; z-index: 1; }
 
-    .hero-icon {
-      width: 104px;
-      height: 104px;
-      border-radius: 24px;
-      object-fit: cover;
-      box-shadow: 0 6px 28px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
+    .hero-mark {
+      width: 80px;
+      height: 80px;
       margin-bottom: 36px;
       display: block;
     }
@@ -236,8 +218,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 48px 0;
+      padding: 24px 0;
     }
+
+    #what .wrap { max-width: 860px; }
 
     /* Contour texture overlay for bands */
     .layers-band {
@@ -440,7 +424,10 @@
   </nav>
 
   <div class="hero">
-    <img src="icon.png" alt="Onset" class="hero-icon">
+    <svg class="hero-mark" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="40" cy="40" r="33" stroke="#2a2420" stroke-width="2.2"/>
+      <circle cx="40" cy="40" r="5.5" fill="#2a2420"/>
+    </svg>
     <h1 class="hero-headline">Onset sees you.</h1>
     <p class="hero-sub">Most of us are not living our lives so much as surviving them. We've lost touch with our truest self and highest aim. Onset is built for this. It gets to know you — specifically, honestly, over time — and realigns you back with yourself.</p>
     <a href="#what" class="hero-cta">Learn more</a>
