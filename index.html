@@ -65,6 +65,7 @@
       width: 26px;
       height: 26px;
       object-fit: contain;
+      mix-blend-mode: multiply;
     }
 
     .nav-wordmark {
@@ -109,24 +110,35 @@
       content: '';
       position: absolute;
       inset: 0;
-      background-image: url("neurons-light.svg");
+      background-image: url("healing-grid.svg");
       background-size: cover;
       background-position: center;
-      -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 46%, transparent 12%, #000 72%);
-      mask-image: radial-gradient(ellipse 62% 58% at 50% 46%, transparent 12%, #000 72%);
       pointer-events: none;
       z-index: 0;
     }
 
     .hero > * { position: relative; z-index: 1; }
 
+    /* App-icon tile: a cream squircle just off the paper, lifted with a real
+       shadow — the enso sits solid inside, no grid behind it. */
+    .hero-mark-wrap {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 34px;
+      background: #ece5d3;
+      box-shadow: 0 20px 46px rgba(56,42,18,0.24),
+                  0 3px 8px rgba(56,42,18,0.16),
+                  inset 0 1px 0 rgba(255,255,255,0.5);
+    }
     .hero-mark {
-      width: 168px;
-      height: 168px;
-      margin-bottom: 30px;
+      width: 96px;
+      height: 96px;
       display: block;
-      /* onset-o.png — the Onset O: the serif letterform with the real
-         hand-inked (raw, imperfect) pupil dropped into its counter. The eye. */
+      /* enso-ink.png — the hand-brushed Japanese ensō with the inked pupil. */
       mix-blend-mode: multiply;
     }
 
@@ -430,14 +442,14 @@
 
   <nav>
     <a href="#" class="nav-brand">
-      <img src="onset-o.png" alt="" class="nav-icon">
+      <img src="enso-ink.png" alt="" class="nav-icon">
       <span class="nav-wordmark">Onset</span>
     </a>
     <a href="#access" class="nav-link">Early Access</a>
   </nav>
 
   <div class="hero">
-    <img src="onset-o.png" alt="" class="hero-mark">
+    <div class="hero-mark-wrap"><img src="enso-ink.png" alt="" class="hero-mark"></div>
     <h1 class="hero-headline">Onset sees you.</h1>
     <p class="hero-sub">Most of us are not living our lives so much as surviving them. We've lost touch with our truest self and highest aim. Onset is built for this. It gets to know you — specifically, honestly, over time — and realigns you with yourself.</p>
     <a href="#what" class="hero-cta">Learn more</a>
