@@ -257,11 +257,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 44px 0;
+      padding: 58px 0;
     }
+    /* Second divider sits on the layers-band: lift the O and give it bottom
+       clearance so the starburst never spills onto the band below. */
+    .divider-tail { padding: 30px 0 140px; }
     .monad-mark {
-      width: 70px;
-      height: 70px;
+      width: 100px;
+      height: 100px;
       object-fit: contain;
       opacity: 0.9;
       mix-blend-mode: multiply;
@@ -511,7 +514,7 @@
     </div>
   </div>
 
-  <div class="monad-divider">
+  <div class="monad-divider divider-tail">
     <img src="enso-ink.png" alt="" class="monad-mark">
   </div>
 
