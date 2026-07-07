@@ -726,6 +726,15 @@
       var r = host.getBoundingClientRect();
       tgt.x = e.clientX - r.left; tgt.y = e.clientY - r.top; haveCursor = true; wake();
     }, { passive: true });
+    // Touch: a phone has no hover, so the grid never healed on mobile. Heal
+    // toward the finger on tap/drag — the "heal-toward-tap" the design called for.
+    function fromTouch(e) {
+      var t = e.touches && e.touches[0]; if (!t) return;
+      var r = host.getBoundingClientRect();
+      tgt.x = t.clientX - r.left; tgt.y = t.clientY - r.top; haveCursor = true; wake();
+    }
+    host.addEventListener('touchstart', fromTouch, { passive: true });
+    host.addEventListener('touchmove', fromTouch, { passive: true });
     var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { build(); draw(); wake(); }, 150); });
     build();
     var m = /[?&]heal=(-?\d+),(-?\d+)/.exec(location.search);
