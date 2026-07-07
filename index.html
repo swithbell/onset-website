@@ -654,12 +654,14 @@
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
     var CELL = 35, MAXJIT = 14, INK = opts.ink, BASE = opts.baseOpacity, FADE = opts.fade;
-    var CORE_PAD = opts.corePad, CORE_SPAN = opts.coreSpan, HEAL_R = opts.healR, HEAL_SPAN = opts.healSpan;
+    var SEED_R = opts.seedR, SEED_SOFT = opts.seedSoft, TEXT_PAD = opts.textPad, TEXT_SOFT = opts.textSoft;
+    var HEAL_R = opts.healR, HEAL_SPAN = opts.healSpan, BREAK_MAX = opts.breakMax;
     var protectSel = opts.protect || [], clearSel = opts.clear || [];
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var W = 0, H = 0, cols = 0, rows = 0, ux = [], uy = [], core = null, clears = [];
+    var W = 0, H = 0, cols = 0, rows = 0, ux = null, uy = null, baseOrd = null, hv = null, rects = [], clears = [], cxC = 0, cyC = 0;
     var cur = { x: 0, y: 0 }, tgt = { x: 0, y: 0 }, haveCursor = false, lastMove = 0, raf = 0;
 
+    function smooth(t) { return t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t); }
     function rectsOf(sel) {
       var r = host.getBoundingClientRect();
       return sel.map(function (s) { return host.querySelector(s); }).filter(Boolean).map(function (e) {
@@ -667,6 +669,7 @@
         return { l: b.left - r.left, t: b.top - r.top, r: b.right - r.left, b: b.bottom - r.top };
       });
     }
+    function rectDist(x, y, rc) { var dx = Math.max(rc.l - x, 0, x - rc.r), dy = Math.max(rc.t - y, 0, y - rc.b); return Math.hypot(dx, dy); }
     function build() {
       var r = host.getBoundingClientRect();
       W = r.width; H = r.height;
@@ -674,47 +677,60 @@
       canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       cols = Math.ceil(W / CELL) + 2; rows = Math.ceil(H / CELL) + 2;
-      ux = []; uy = [];
-      for (var n = 0; n <= (cols + 1) * (rows + 1); n++) {
-        var a = Math.random() * Math.PI * 2; ux.push(Math.cos(a)); uy.push(Math.sin(a));
-      }
-      var pr = rectsOf(protectSel);
+      var NV = (cols + 1) * (rows + 1) + 1;
+      ux = new Float32Array(NV); uy = new Float32Array(NV);
+      for (var n = 0; n < NV; n++) { var a = Math.random() * Math.PI * 2; ux[n] = Math.cos(a); uy[n] = Math.sin(a); }
+      rects = rectsOf(protectSel);
       var L = 1e9, T = 1e9, R = -1e9, B = -1e9;
-      pr.forEach(function (b) { L = Math.min(L, b.l); T = Math.min(T, b.t); R = Math.max(R, b.r); B = Math.max(B, b.b); });
-      if (pr.length === 0) { L = R = W / 2; T = B = H / 2; }
-      core = { l: L - CORE_PAD, t: T - CORE_PAD, r: R + CORE_PAD, b: B + CORE_PAD };
+      rects.forEach(function (b) { L = Math.min(L, b.l); T = Math.min(T, b.t); R = Math.max(R, b.r); B = Math.max(B, b.b); });
+      if (rects.length === 0) { L = R = W / 2; T = B = H / 2; }
+      cxC = (L + R) / 2; cyC = (T + B) / 2;
       clears = rectsOf(clearSel).map(function (b) { return { l: b.l - 10, t: b.t - 8, r: b.r + 10, b: b.b + 8 }; });
-      if (!haveCursor) { tgt.x = cur.x = (L + R) / 2; tgt.y = cur.y = (T + B) / 2; }
+      // Static base order per vertex: a SMALL central seed of calm (gentle soft
+      // falloff) plus a tight ordered margin hugging the text so letters stay crisp.
+      // Everything else starts broken — yours to heal.
+      baseOrd = new Float32Array(NV); hv = new Float32Array(NV);
+      for (var j = 0; j <= rows; j++) for (var i = 0; i <= cols; i++) {
+        var k = j * (cols + 1) + i, x = -CELL + i * CELL, y = -CELL + j * CELL;
+        var seed = 1 - smooth((Math.hypot(x - cxC, y - cyC) - SEED_R) / SEED_SOFT);
+        var tord = 0;
+        for (var mI = 0; mI < rects.length; mI++) { var o = 1 - smooth((rectDist(x, y, rects[mI]) - TEXT_PAD) / TEXT_SOFT); if (o > tord) tord = o; }
+        baseOrd[k] = Math.max(seed, tord);
+      }
+      if (!haveCursor) { tgt.x = cur.x = cxC; tgt.y = cur.y = cyC; }
     }
     function inClear(x, y) {
       for (var i = 0; i < clears.length; i++) { var c = clears[i]; if (x >= c.l && x <= c.r && y >= c.t && y <= c.b) return true; }
       return false;
     }
-    function disorder(x, y) {
-      var dx = Math.max(core.l - x, 0, x - core.r), dy = Math.max(core.t - y, 0, y - core.b);
-      var rampCore = Math.min(1, Math.hypot(dx, dy) / CORE_SPAN);
-      var dc = Math.hypot(x - cur.x, y - cur.y);
-      var rampCur = Math.max(0, Math.min(1, (dc - HEAL_R) / HEAL_SPAN));
-      return Math.min(rampCore, rampCur);
+    function paint() {
+      if (!haveCursor || !hv) return;
+      var reach = HEAL_R + HEAL_SPAN;
+      for (var j = 0; j <= rows; j++) for (var i = 0; i <= cols; i++) {
+        var x = -CELL + i * CELL, y = -CELL + j * CELL, dd = Math.hypot(x - cur.x, y - cur.y);
+        if (dd > reach) continue;
+        var b = 1 - smooth((dd - HEAL_R) / HEAL_SPAN);
+        var k = j * (cols + 1) + i; if (b > hv[k]) hv[k] = b;   // persistent: healed stays healed
+      }
     }
     function draw() {
       ctx.clearRect(0, 0, W, H);
       ctx.lineWidth = 1; ctx.lineCap = 'round';
       var i, j;
       function P(i, j) {
-        var bx = -CELL + i * CELL, by = -CELL + j * CELL, d = disorder(bx, by), a = MAXJIT * d, k = j * (cols + 1) + i;
+        var k = j * (cols + 1) + i;
+        var d = 1 - Math.max(baseOrd[k], hv[k]);       // disorder = 1 - (given seed OR painted order)
+        var bx = -CELL + i * CELL, by = -CELL + j * CELL, a = MAXJIT * d;
         return [bx + ux[k] * a, by + uy[k] * a, d];
       }
       function seg(p, q) {
         var mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2;
-        if (inClear(mx, my)) return;                 // grid invisible behind the form fields
+        if (inClear(mx, my)) return;                   // grid invisible behind the form fields
         var d = (p[2] + q[2]) / 2, op = BASE - FADE * d;
         // The break: in disorder the segment retracts from BOTH vertices, so the
-        // grid comes apart at its joints — lines no longer touch. As the cursor
-        // heals a cell (d -> 0) the retract -> 0 and the segments knit back into a
-        // continuous grid. Ordered = whole; chaos = broken.
-        var g = Math.pow(d, 1.25) * 0.34;
-        if (g > 0.47) return;                        // deepest chaos: the joint is fully severed
+        // grid comes apart at its joints. Heal a cell and the retract -> 0 and the
+        // segments knit back into a continuous grid. Ordered = whole; chaos = broken.
+        var g = Math.pow(d, 1.5) * BREAK_MAX;
         var sx = p[0] + (q[0] - p[0]) * g, sy = p[1] + (q[1] - p[1]) * g;
         var ex = q[0] - (q[0] - p[0]) * g, ey = q[1] - (q[1] - p[1]) * g;
         ctx.strokeStyle = 'rgba(' + INK + ',' + op.toFixed(3) + ')';
@@ -724,42 +740,50 @@
       for (i = 0; i <= cols; i++) for (j = 0; j < rows; j++) seg(P(i, j), P(i, j + 1));
     }
     function loop() {
-      cur.x += (tgt.x - cur.x) * 0.12; cur.y += (tgt.y - cur.y) * 0.12;
-      draw();
-      if (Math.abs(tgt.x - cur.x) < 0.5 && Math.abs(tgt.y - cur.y) < 0.5 && performance.now() - lastMove > 1600) { raf = 0; return; }
+      cur.x += (tgt.x - cur.x) * 0.2; cur.y += (tgt.y - cur.y) * 0.2;
+      paint(); draw();
+      if (Math.abs(tgt.x - cur.x) < 0.5 && Math.abs(tgt.y - cur.y) < 0.5 && performance.now() - lastMove > 300) { raf = 0; return; }
       raf = requestAnimationFrame(loop);
     }
     function wake() { lastMove = performance.now(); if (!raf) raf = requestAnimationFrame(loop); }
+    function within(rx, ry) { return rx >= 0 && ry >= 0 && rx <= W && ry <= H; }
     window.addEventListener('mousemove', function (e) {
-      var r = host.getBoundingClientRect();
-      tgt.x = e.clientX - r.left; tgt.y = e.clientY - r.top; haveCursor = true; wake();
+      var r = host.getBoundingClientRect(), rx = e.clientX - r.left, ry = e.clientY - r.top;
+      if (!within(rx, ry)) return;
+      tgt.x = rx; tgt.y = ry; haveCursor = true; wake();
     }, { passive: true });
-    // Touch: a phone has no hover, so the grid never healed on mobile. Heal
-    // toward the finger on tap/drag — the "heal-toward-tap" the design called for.
+    // Touch: a phone has no hover, so heal toward the finger on tap/drag.
     function fromTouch(e) {
       var t = e.touches && e.touches[0]; if (!t) return;
-      var r = host.getBoundingClientRect();
-      tgt.x = t.clientX - r.left; tgt.y = t.clientY - r.top; haveCursor = true; wake();
+      var r = host.getBoundingClientRect(), rx = t.clientX - r.left, ry = t.clientY - r.top;
+      tgt.x = rx; tgt.y = ry; haveCursor = true; wake();
     }
     host.addEventListener('touchstart', fromTouch, { passive: true });
     host.addEventListener('touchmove', fromTouch, { passive: true });
     var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { build(); draw(); wake(); }, 150); });
+    // Painted order persists while the section is in view; scroll it away and it
+    // resets — a fresh field to play again when you come back.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (en) { if (en.intersectionRatio < 0.06 && hv) { hv.fill(0); draw(); } });
+      }, { threshold: [0, 0.06, 0.5] }).observe(host);
+    }
     build();
-    var m = /[?&]heal=(-?\d+),(-?\d+)/.exec(location.search);
-    if (m) { tgt.x = cur.x = +m[1]; tgt.y = cur.y = +m[2]; haveCursor = true; draw(); }
+    var mm = /[?&]heal=(-?\d+),(-?\d+)/.exec(location.search);
+    if (mm) { tgt.x = cur.x = +mm[1]; tgt.y = cur.y = +mm[2]; haveCursor = true; paint(); draw(); }
     else { draw(); }
   }
 
   // Top — light grid on paper; small stable core, lots of room for the cursor.
   initHealGrid(document.querySelector('.hero'), {
     ink: '154,122,56', baseOpacity: 0.30, fade: 0.05,
-    corePad: 10, coreSpan: 48, healR: 44, healSpan: 130,
+    seedR: 38, seedSoft: 155, textPad: 8, textSoft: 22, healR: 24, healSpan: 95, breakMax: 0.27,
     protect: ['.hero-mark-wrap', '.hero-headline', '.hero-sub'], clear: []
   });
   // Bottom — reverse grid: warm gold on ink; invisible behind the form fields.
   initHealGrid(document.querySelector('.access-band'), {
     ink: '201,169,110', baseOpacity: 0.32, fade: 0.03,
-    corePad: 10, coreSpan: 44, healR: 46, healSpan: 150,
+    seedR: 38, seedSoft: 155, textPad: 8, textSoft: 22, healR: 26, healSpan: 150, breakMax: 0.27,
     protect: ['.section-label', 'h2', '.wrap > p'], clear: ['#access-email', '#access-input', '.access-btn']
   });
 })();
