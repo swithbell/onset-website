@@ -684,7 +684,7 @@
     var canvas = host.querySelector('canvas.heal-canvas');
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
-    var CELL = 35, MAXJIT = 14, INK = opts.ink, BASE = opts.baseOpacity, FADE = opts.fade;
+    var CELL = canTouch ? 20 : 35, MAXJIT = canTouch ? 8 : 14, INK = opts.ink, BASE = canTouch ? opts.baseOpacity * 0.55 : opts.baseOpacity, FADE = opts.fade;
     var SEED_R = opts.seedR, SEED_SOFT = opts.seedSoft, TEXT_PAD = opts.textPad, TEXT_SOFT = opts.textSoft;
     var HEAL_R = opts.healR, HEAL_SPAN = opts.healSpan, BREAK_MAX = opts.breakMax;
     var protectSel = opts.protect || [], clearSel = opts.clear || [];
@@ -817,7 +817,7 @@
   initHealGrid(document.querySelector('.hero'), {
     ink: '154,122,56', baseOpacity: 0.30, fade: 0.05,
     seedR: 38, seedSoft: 155, textPad: 8, textSoft: 22, healR: 24, healSpan: 95, breakMax: 0.27,
-    protect: ['.hero-mark-wrap', '.hero-headline', '.hero-sub'], clear: ['.hero-sub']
+    protect: ['.hero-mark-wrap', '.hero-headline', '.hero-sub'], clear: []
   });
   // Bottom — reverse grid: warm gold on ink; invisible behind the form fields.
   initHealGrid(document.querySelector('.access-band'), {
