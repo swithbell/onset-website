@@ -125,8 +125,8 @@
       position: absolute; inset: 0; z-index: 0;
       pointer-events: none; display: none;
     }
-    body.heal-on .hero > canvas.hero-grid { display: block; }
-    body.heal-on .hero::before { opacity: 0; }
+    body.heal-on:not(.touch-device) .hero > canvas.hero-grid { display: block; }
+    body.heal-on:not(.touch-device) .hero::before { opacity: 0; }
     body.heal-on { -webkit-user-select: none; user-select: none; }
 
     /* Reverse healing grid on the dark access band (gold on ink). */
@@ -134,8 +134,8 @@
       position: absolute; inset: 0; z-index: 0;
       pointer-events: none; display: none;
     }
-    body.heal-on .access-band > canvas.heal-canvas { display: block; }
-    body.heal-on .access-band::before { opacity: 0; }
+    body.heal-on:not(.touch-device) .access-band > canvas.heal-canvas { display: block; }
+    body.heal-on:not(.touch-device) .access-band::before { opacity: 0; }
 
     /* App-icon tile: a cream squircle just off the paper, lifted with a real
        shadow — the enso sits solid inside, no grid behind it. */
@@ -677,9 +677,10 @@
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if ((!fine && !canTouch || reduce) && !demo) return;  // keep the static look on no-input / reduced-motion
   document.body.classList.add('heal-on');
+  if (canTouch) document.body.classList.add('touch-device'); // touch: starburst yes, canvas grid no
 
   function initHealGrid(host, opts) {
-    if (!host) return;
+    if (!host || canTouch) return; // touch: keep static SVG, skip canvas
     var canvas = host.querySelector('canvas.heal-canvas');
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
