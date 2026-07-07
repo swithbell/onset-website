@@ -709,8 +709,16 @@
         var mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2;
         if (inClear(mx, my)) return;                 // grid invisible behind the form fields
         var d = (p[2] + q[2]) / 2, op = BASE - FADE * d;
+        // The break: in disorder the segment retracts from BOTH vertices, so the
+        // grid comes apart at its joints — lines no longer touch. As the cursor
+        // heals a cell (d -> 0) the retract -> 0 and the segments knit back into a
+        // continuous grid. Ordered = whole; chaos = broken.
+        var g = Math.pow(d, 1.25) * 0.34;
+        if (g > 0.47) return;                        // deepest chaos: the joint is fully severed
+        var sx = p[0] + (q[0] - p[0]) * g, sy = p[1] + (q[1] - p[1]) * g;
+        var ex = q[0] - (q[0] - p[0]) * g, ey = q[1] - (q[1] - p[1]) * g;
         ctx.strokeStyle = 'rgba(' + INK + ',' + op.toFixed(3) + ')';
-        ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
       }
       for (j = 0; j <= rows; j++) for (i = 0; i < cols; i++) seg(P(i, j), P(i + 1, j));
       for (i = 0; i <= cols; i++) for (j = 0; j < rows; j++) seg(P(i, j), P(i, j + 1));
