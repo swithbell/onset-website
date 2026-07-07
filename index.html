@@ -641,8 +641,8 @@
   document.body.classList.add('heal-on');
 
   var ctx = canvas.getContext('2d');
-  var CELL = 35, MAXJIT = 10, INK = '154,122,56';
-  var CORE_PAD = 34, CORE_SPAN = 300, HEAL_R = 95, HEAL_SPAN = 250;
+  var CELL = 35, MAXJIT = 14, INK = '154,122,56';
+  var CORE_PAD = 28, CORE_SPAN = 175, HEAL_R = 44, HEAL_SPAN = 130;
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
   var W = 0, H = 0, cols = 0, rows = 0, ux = [], uy = [], core = null;
   var cur = { x: 0, y: 0 }, tgt = { x: 0, y: 0 }, haveCursor = false, lastMove = 0, raf = 0;
