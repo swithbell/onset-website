@@ -792,7 +792,7 @@
       new IntersectionObserver(function (es) {
         es.forEach(function (en) {
           if (en.intersectionRatio < 0.06 && hv) { hv.fill(0); draw(); }
-          else if (canTouch && en.intersectionRatio >= 0.35 && hv) { hv.fill(1); haveCursor = true; draw(); }
+          else if (canTouch && en.intersectionRatio >= 0.35 && hv) { hv.fill(0.45); haveCursor = true; draw(); }
         });
       }, { threshold: [0, 0.06, 0.35, 0.5] }).observe(host);
     }
@@ -809,7 +809,7 @@
     build();
     var mm = /[?&]heal=(-?\d+),(-?\d+)/.exec(location.search);
     if (mm) { tgt.x = cur.x = +mm[1]; tgt.y = cur.y = +mm[2]; haveCursor = true; paint(); draw(); }
-    else if (canTouch) { hv.fill(1); haveCursor = true; draw(); }   // touch: start fully healed (ordered grid)
+    else if (canTouch) { hv.fill(0.45); haveCursor = true; draw(); }   // touch: start fully healed (ordered grid)
     else { draw(); }
   }
 
