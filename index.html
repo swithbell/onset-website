@@ -853,7 +853,7 @@
           ctx.strokeStyle = g; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
         }
       }
-      function loop() { draw(); if (!locked) { for (var i = 0; i < NB; i++) bins[i] *= 0.955; } var alive = active || (!locked && anyBin()); if (alive) raf = requestAnimationFrame(loop); else { raf = 0; draw(); } }
+      function loop() { draw(); if (active) raf = requestAnimationFrame(loop); else raf = 0; }   // rays persist — no decay; a drawn ray stays until the circle is finished (or scroll-reset)
       if ('IntersectionObserver' in window) { new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.intersectionRatio < 0.12) reset(); }); }, { threshold: [0, 0.12, 0.5] }).observe(host); }
       draw();
     }
