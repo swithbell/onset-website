@@ -672,8 +672,9 @@
 (function () {
   var demo = /[?&]heal=/.test(location.search);
   var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var canTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if ((!fine || reduce) && !demo) return;      // keep the static look
+  if ((!fine && !canTouch || reduce) && !demo) return;  // keep the static look on no-input / reduced-motion
   document.body.classList.add('heal-on');
 
   function initHealGrid(host, opts) {
