@@ -270,6 +270,12 @@
 
     #what .wrap { max-width: 860px; }
 
+    /* Founder's note — the one first-person voice on the page. */
+    .founder-note { max-width: 640px; }
+    .founder-note .founder-sign { font-style: italic; color: var(--gold-deep); margin-top: 20px; }
+    .site-foot { padding: 32px 24px 48px; text-align: center; }
+    .site-foot p { max-width: 600px; margin: 0 auto; font-size: 12px; line-height: 1.6; color: #9a8d78; }
+
     /* LAYERS — kept clean (no texture) so the neural motif reads as an accent,
        bookending the page at hero + access rather than appearing everywhere. */
     .layers-band {
@@ -562,6 +568,17 @@
     </div>
   </div>
 
+  <div>
+    <div class="wrap founder-note">
+      <div class="section-label">Why I built it</div>
+      <p>I spent twenty years in therapy. It gave me a great deal. But there was one thing it could never be — a mirror with no agenda of its own, no hour running out, no memory that resets between visits. Something that could gather the whole of my story and actually <em>hold</em> it, and hand it back to me clearly.</p>
+      <p>That's what I needed. Not more advice, not to be fixed. To be seen completely — by something with no stake in who I turned out to be.</p>
+      <p>Onset is that. It isn't therapy, and it isn't meant to replace a professional. It's a different thing altogether: an unbiased witness that never forgets — it listens without flinching, remembers without distorting, and shows me myself in a way I never could alone.</p>
+      <p>I built it because I want to know who I am while I still can. I suspect you might want the same.</p>
+      <p class="founder-sign">— Swith</p>
+    </div>
+  </div>
+
   <div class="access-band" id="access">
     <canvas class="heal-canvas" aria-hidden="true"></canvas>
     <div class="wrap">
@@ -581,6 +598,10 @@
       </div>
     </div>
   </div>
+
+  <footer class="site-foot">
+    <p>Onset is a personal reflection tool, not therapy or medical treatment, and not a substitute for professional care. If you're struggling, please reach out to a licensed professional or your local emergency services.</p>
+  </footer>
 
   <footer>
     <p>Onset &nbsp;·&nbsp; youronset.com &nbsp;·&nbsp; Private beta</p>
