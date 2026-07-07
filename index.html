@@ -745,13 +745,13 @@
   // Top — light grid on paper; small stable core, lots of room for the cursor.
   initHealGrid(document.querySelector('.hero'), {
     ink: '154,122,56', baseOpacity: 0.30, fade: 0.05,
-    corePad: 14, coreSpan: 95, healR: 44, healSpan: 130,
+    corePad: 10, coreSpan: 48, healR: 44, healSpan: 130,
     protect: ['.hero-mark-wrap', '.hero-headline', '.hero-sub'], clear: []
   });
   // Bottom — reverse grid: warm gold on ink; invisible behind the form fields.
   initHealGrid(document.querySelector('.access-band'), {
     ink: '201,169,110', baseOpacity: 0.32, fade: 0.03,
-    corePad: 14, coreSpan: 80, healR: 46, healSpan: 150,
+    corePad: 10, coreSpan: 44, healR: 46, healSpan: 150,
     protect: ['.section-label', 'h2', '.wrap > p'], clear: ['#access-email', '#access-input', '.access-btn']
   });
 })();
