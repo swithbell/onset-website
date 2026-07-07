@@ -128,6 +128,14 @@
     body.heal-on .hero > canvas.hero-grid { display: block; }
     body.heal-on .hero::before { opacity: 0; }
 
+    /* Reverse healing grid on the dark access band (gold on ink). */
+    .access-band > canvas.heal-canvas {
+      position: absolute; inset: 0; z-index: 0;
+      pointer-events: none; display: none;
+    }
+    body.heal-on .access-band > canvas.heal-canvas { display: block; }
+    body.heal-on .access-band::before { opacity: 0; }
+
     /* App-icon tile: a cream squircle just off the paper, lifted with a real
        shadow — the enso sits solid inside, no grid behind it. */
     .hero-mark-wrap {
@@ -467,7 +475,7 @@
   </nav>
 
   <div class="hero">
-    <canvas class="hero-grid" aria-hidden="true"></canvas>
+    <canvas class="hero-grid heal-canvas" aria-hidden="true"></canvas>
     <div class="hero-mark-wrap"><img src="enso-ink.png" alt="" class="hero-mark"></div>
     <h1 class="hero-headline">Onset sees you.</h1>
     <p class="hero-sub">Most of us are not living our lives so much as surviving them. We've lost touch with our truest self and highest aim. Onset is built for this. It gets to know you — specifically, honestly, over time — and realigns you with yourself.</p>
@@ -549,12 +557,13 @@
       <div class="section-label">Built for the long arc</div>
       <h2>For the moment of decline. Valuable every day before it arrives.</h2>
       <p>The founding use case is early-onset cognitive decline — the most urgent version of a universal need. Onset keeps your portrait steady so that when your own grip on it loosens, something holds it for you. Something that says every morning: you are still here. Here is who you are. Your life was worth living.</p>
-      <p>But the need is not only there. Everyone is losing themselves to some degree. Onset is for anyone who wants to live more deliberately, and be deeply known.</p>
+      <p>But the need is not only for holding on through cognitive decline. Everyone is losing themselves to some degree. Onset is for anyone who wants to live more deliberately, and be deeply known.</p>
       <blockquote>"The best time to start was ten years ago. The second best time is now, while you still can."</blockquote>
     </div>
   </div>
 
   <div class="access-band" id="access">
+    <canvas class="heal-canvas" aria-hidden="true"></canvas>
     <div class="wrap">
       <div class="section-label">Early access</div>
       <h2>You're here because someone who loves this product loves you.</h2>
@@ -633,83 +642,109 @@
    icon are always protected (a permanent ordered core). Touch / reduced-motion
    keep the static SVG texture instead. */
 (function () {
-  var hero = document.querySelector('.hero');
-  var canvas = hero && hero.querySelector('canvas.hero-grid');
-  if (!canvas) return;
   var demo = /[?&]heal=/.test(location.search);
   var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if ((!fine || reduce) && !demo) return;      // keep the static look
   document.body.classList.add('heal-on');
 
-  var ctx = canvas.getContext('2d');
-  var CELL = 35, MAXJIT = 14, INK = '154,122,56';
-  var CORE_PAD = 28, CORE_SPAN = 175, HEAL_R = 44, HEAL_SPAN = 130;
-  var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var W = 0, H = 0, cols = 0, rows = 0, ux = [], uy = [], core = null;
-  var cur = { x: 0, y: 0 }, tgt = { x: 0, y: 0 }, haveCursor = false, lastMove = 0, raf = 0;
+  function initHealGrid(host, opts) {
+    if (!host) return;
+    var canvas = host.querySelector('canvas.heal-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var CELL = 35, MAXJIT = 14, INK = opts.ink, BASE = opts.baseOpacity, FADE = opts.fade;
+    var CORE_PAD = opts.corePad, CORE_SPAN = opts.coreSpan, HEAL_R = opts.healR, HEAL_SPAN = opts.healSpan;
+    var protectSel = opts.protect || [], clearSel = opts.clear || [];
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var W = 0, H = 0, cols = 0, rows = 0, ux = [], uy = [], core = null, clears = [];
+    var cur = { x: 0, y: 0 }, tgt = { x: 0, y: 0 }, haveCursor = false, lastMove = 0, raf = 0;
 
-  function build() {
-    var r = hero.getBoundingClientRect();
-    W = r.width; H = r.height;
-    canvas.width = W * dpr; canvas.height = H * dpr;
-    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    cols = Math.ceil(W / CELL) + 2; rows = Math.ceil(H / CELL) + 2;
-    ux = []; uy = [];
-    for (var n = 0; n <= (cols + 1) * (rows + 1); n++) {
-      var a = Math.random() * Math.PI * 2; ux.push(Math.cos(a)); uy.push(Math.sin(a));
+    function rectsOf(sel) {
+      var r = host.getBoundingClientRect();
+      return sel.map(function (s) { return host.querySelector(s); }).filter(Boolean).map(function (e) {
+        var b = e.getBoundingClientRect();
+        return { l: b.left - r.left, t: b.top - r.top, r: b.right - r.left, b: b.bottom - r.top };
+      });
     }
-    var els = ['.hero-mark-wrap', '.hero-headline', '.hero-sub']
-      .map(function (s) { return hero.querySelector(s); }).filter(Boolean);
-    var L = 1e9, T = 1e9, R = -1e9, B = -1e9;
-    els.forEach(function (e) {
-      var b = e.getBoundingClientRect();
-      L = Math.min(L, b.left - r.left); T = Math.min(T, b.top - r.top);
-      R = Math.max(R, b.right - r.left); B = Math.max(B, b.bottom - r.top);
-    });
-    core = { l: L - CORE_PAD, t: T - CORE_PAD, r: R + CORE_PAD, b: B + CORE_PAD };
-    if (!haveCursor) { tgt.x = cur.x = (L + R) / 2; tgt.y = cur.y = (T + B) / 2; }
-  }
-  function disorder(x, y) {
-    var dx = Math.max(core.l - x, 0, x - core.r), dy = Math.max(core.t - y, 0, y - core.b);
-    var rampCore = Math.min(1, Math.hypot(dx, dy) / CORE_SPAN);
-    var dc = Math.hypot(x - cur.x, y - cur.y);
-    var rampCur = Math.max(0, Math.min(1, (dc - HEAL_R) / HEAL_SPAN));
-    return Math.min(rampCore, rampCur);
-  }
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    ctx.lineWidth = 1; ctx.lineCap = 'round';
-    var i, j;
-    function P(i, j) {
-      var bx = -CELL + i * CELL, by = -CELL + j * CELL, d = disorder(bx, by), a = MAXJIT * d, k = j * (cols + 1) + i;
-      return [bx + ux[k] * a, by + uy[k] * a, d];
+    function build() {
+      var r = host.getBoundingClientRect();
+      W = r.width; H = r.height;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cols = Math.ceil(W / CELL) + 2; rows = Math.ceil(H / CELL) + 2;
+      ux = []; uy = [];
+      for (var n = 0; n <= (cols + 1) * (rows + 1); n++) {
+        var a = Math.random() * Math.PI * 2; ux.push(Math.cos(a)); uy.push(Math.sin(a));
+      }
+      var pr = rectsOf(protectSel);
+      var L = 1e9, T = 1e9, R = -1e9, B = -1e9;
+      pr.forEach(function (b) { L = Math.min(L, b.l); T = Math.min(T, b.t); R = Math.max(R, b.r); B = Math.max(B, b.b); });
+      if (pr.length === 0) { L = R = W / 2; T = B = H / 2; }
+      core = { l: L - CORE_PAD, t: T - CORE_PAD, r: R + CORE_PAD, b: B + CORE_PAD };
+      clears = rectsOf(clearSel).map(function (b) { return { l: b.l - 10, t: b.t - 8, r: b.r + 10, b: b.b + 8 }; });
+      if (!haveCursor) { tgt.x = cur.x = (L + R) / 2; tgt.y = cur.y = (T + B) / 2; }
     }
-    function seg(p, q) {
-      var d = (p[2] + q[2]) / 2, op = 0.30 - 0.05 * d;   /* edges stay visible — no fade to paper */
-      ctx.strokeStyle = 'rgba(' + INK + ',' + op.toFixed(3) + ')';
-      ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+    function inClear(x, y) {
+      for (var i = 0; i < clears.length; i++) { var c = clears[i]; if (x >= c.l && x <= c.r && y >= c.t && y <= c.b) return true; }
+      return false;
     }
-    for (j = 0; j <= rows; j++) for (i = 0; i < cols; i++) seg(P(i, j), P(i + 1, j));
-    for (i = 0; i <= cols; i++) for (j = 0; j < rows; j++) seg(P(i, j), P(i, j + 1));
+    function disorder(x, y) {
+      var dx = Math.max(core.l - x, 0, x - core.r), dy = Math.max(core.t - y, 0, y - core.b);
+      var rampCore = Math.min(1, Math.hypot(dx, dy) / CORE_SPAN);
+      var dc = Math.hypot(x - cur.x, y - cur.y);
+      var rampCur = Math.max(0, Math.min(1, (dc - HEAL_R) / HEAL_SPAN));
+      return Math.min(rampCore, rampCur);
+    }
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.lineWidth = 1; ctx.lineCap = 'round';
+      var i, j;
+      function P(i, j) {
+        var bx = -CELL + i * CELL, by = -CELL + j * CELL, d = disorder(bx, by), a = MAXJIT * d, k = j * (cols + 1) + i;
+        return [bx + ux[k] * a, by + uy[k] * a, d];
+      }
+      function seg(p, q) {
+        var mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2;
+        if (inClear(mx, my)) return;                 // grid invisible behind the form fields
+        var d = (p[2] + q[2]) / 2, op = BASE - FADE * d;
+        ctx.strokeStyle = 'rgba(' + INK + ',' + op.toFixed(3) + ')';
+        ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+      }
+      for (j = 0; j <= rows; j++) for (i = 0; i < cols; i++) seg(P(i, j), P(i + 1, j));
+      for (i = 0; i <= cols; i++) for (j = 0; j < rows; j++) seg(P(i, j), P(i, j + 1));
+    }
+    function loop() {
+      cur.x += (tgt.x - cur.x) * 0.12; cur.y += (tgt.y - cur.y) * 0.12;
+      draw();
+      if (Math.abs(tgt.x - cur.x) < 0.5 && Math.abs(tgt.y - cur.y) < 0.5 && performance.now() - lastMove > 1600) { raf = 0; return; }
+      raf = requestAnimationFrame(loop);
+    }
+    function wake() { lastMove = performance.now(); if (!raf) raf = requestAnimationFrame(loop); }
+    window.addEventListener('mousemove', function (e) {
+      var r = host.getBoundingClientRect();
+      tgt.x = e.clientX - r.left; tgt.y = e.clientY - r.top; haveCursor = true; wake();
+    }, { passive: true });
+    var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { build(); draw(); wake(); }, 150); });
+    build();
+    var m = /[?&]heal=(-?\d+),(-?\d+)/.exec(location.search);
+    if (m) { tgt.x = cur.x = +m[1]; tgt.y = cur.y = +m[2]; haveCursor = true; draw(); }
+    else { draw(); }
   }
-  function loop() {
-    cur.x += (tgt.x - cur.x) * 0.12; cur.y += (tgt.y - cur.y) * 0.12;
-    draw();
-    if (Math.abs(tgt.x - cur.x) < 0.5 && Math.abs(tgt.y - cur.y) < 0.5 && performance.now() - lastMove > 1600) { raf = 0; return; }
-    raf = requestAnimationFrame(loop);
-  }
-  function wake() { lastMove = performance.now(); if (!raf) raf = requestAnimationFrame(loop); }
-  window.addEventListener('mousemove', function (e) {
-    var r = hero.getBoundingClientRect();
-    tgt.x = e.clientX - r.left; tgt.y = e.clientY - r.top; haveCursor = true; wake();
-  }, { passive: true });
-  var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { build(); draw(); wake(); }, 150); });
-  build();
-  var m = /[?&]heal=(\d+),(\d+)/.exec(location.search);
-  if (m) { tgt.x = cur.x = +m[1]; tgt.y = cur.y = +m[2]; haveCursor = true; draw(); }
-  else { draw(); }
+
+  // Top — light grid on paper; small stable core, lots of room for the cursor.
+  initHealGrid(document.querySelector('.hero'), {
+    ink: '154,122,56', baseOpacity: 0.30, fade: 0.05,
+    corePad: 14, coreSpan: 95, healR: 44, healSpan: 130,
+    protect: ['.hero-mark-wrap', '.hero-headline', '.hero-sub'], clear: []
+  });
+  // Bottom — reverse grid: warm gold on ink; invisible behind the form fields.
+  initHealGrid(document.querySelector('.access-band'), {
+    ink: '201,169,110', baseOpacity: 0.32, fade: 0.03,
+    corePad: 14, coreSpan: 80, healR: 46, healSpan: 150,
+    protect: ['.section-label', 'h2', '.wrap > p'], clear: ['#access-email', '#access-input', '.access-btn']
+  });
 })();
 </script>
 </body>
