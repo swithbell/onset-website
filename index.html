@@ -782,21 +782,28 @@
       if (!within(rx, ry)) return;
       tgt.x = rx; tgt.y = ry; haveCursor = true; wake();
     }, { passive: true });
-    // Touch: a phone has no hover, so heal toward the finger on tap/drag.
-    function fromTouch(e) {
-      var t = e.touches && e.touches[0]; if (!t) return;
-      var r = host.getBoundingClientRect(), rx = t.clientX - r.left, ry = t.clientY - r.top;
-      tgt.x = rx; tgt.y = ry; haveCursor = true; wake();
-    }
-    host.addEventListener('touchstart', fromTouch, { passive: true });
-    host.addEventListener('touchmove', fromTouch, { passive: true });
     var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { build(); draw(); wake(); }, 150); });
     // Painted order persists while the section is in view; scroll it away and it
     // resets — a fresh field to play again when you come back.
+    // On touch: auto-heal from centre when section scrolls into view (no drag/scroll
+    // conflict). On mouse: follow cursor + touchstart/touchmove as fallback.
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (es) {
-        es.forEach(function (en) { if (en.intersectionRatio < 0.06 && hv) { hv.fill(0); draw(); } });
-      }, { threshold: [0, 0.06, 0.5] }).observe(host);
+        es.forEach(function (en) {
+          if (en.intersectionRatio < 0.06 && hv) { hv.fill(0); draw(); }
+          else if (canTouch && en.intersectionRatio >= 0.35) { haveCursor = true; tgt.x = cxC; tgt.y = cyC; wake(); }
+        });
+      }, { threshold: [0, 0.06, 0.35, 0.5] }).observe(host);
+    }
+    if (!canTouch) {
+      // Mouse fallback for touch-capable laptops in mouse mode.
+      function fromTouch(e) {
+        var t = e.touches && e.touches[0]; if (!t) return;
+        var r = host.getBoundingClientRect(), rx = t.clientX - r.left, ry = t.clientY - r.top;
+        tgt.x = rx; tgt.y = ry; haveCursor = true; wake();
+      }
+      host.addEventListener('touchstart', fromTouch, { passive: true });
+      host.addEventListener('touchmove', fromTouch, { passive: true });
     }
     build();
     var mm = /[?&]heal=(-?\d+),(-?\d+)/.exec(location.search);
