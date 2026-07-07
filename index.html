@@ -18,9 +18,9 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --paper: #ece4d2;
-      --paper-warm: #e4d9c6;
-      --paper-deep: #d8ccb5;
+      --paper: #ecdbb8;
+      --paper-warm: #e3d0a2;
+      --paper-deep: #d4bf8e;
       --ink: #1c1814;
       --ink-soft: #4a4540;
       --ink-faint: #8a8278;
@@ -49,7 +49,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(236, 228, 210, 0.96);
+      background: rgba(236, 219, 184, 0.96);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(180, 158, 110, 0.22);
     }
@@ -101,7 +101,7 @@
       padding: 120px 40px 80px;
       position: relative;
       overflow: hidden;
-      background: radial-gradient(ellipse 70% 60% at 50% 48%, #f0e4c8 0%, var(--paper) 70%);
+      background: radial-gradient(ellipse 70% 60% at 50% 48%, #f4e5b4 0%, var(--paper) 70%);
     }
 
     /* Neural texture in hero — hand-wobbled axons + synapse nodes.
@@ -138,7 +138,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 34px;
-      background: #ece5d3;
+      background: #f0e1ba;
       box-shadow: 0 20px 46px rgba(56,42,18,0.24),
                   0 3px 8px rgba(56,42,18,0.16),
                   inset 0 1px 0 rgba(255,255,255,0.5);
@@ -149,6 +149,7 @@
       display: block;
       /* enso-ink.png — the hand-brushed Japanese ensō with the inked pupil. */
       mix-blend-mode: multiply;
+      filter: sepia(0.5) saturate(1.5) hue-rotate(-12deg) brightness(0.97);
     }
 
     .hero-eyebrow {
@@ -248,14 +249,15 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 24px 0;
+      padding: 44px 0;
     }
     .monad-mark {
-      width: 40px;
-      height: 40px;
+      width: 70px;
+      height: 70px;
       object-fit: contain;
-      opacity: 0.55;
+      opacity: 0.9;
       mix-blend-mode: multiply;
+      filter: sepia(0.5) saturate(1.5) hue-rotate(-12deg) brightness(0.97);
     }
 
     #what .wrap { max-width: 860px; }
@@ -490,8 +492,8 @@
     <div class="wrap">
       <div class="section-label">The portrait</div>
       <h2>Not a database. A layered portrait.</h2>
-      <p>Onset's memory is foundational things that don't change much at the bottom, and more recent signal at the top — always weighting the recent more heavily as the picture evolves. Everything is timestamped. Everything has context.</p>
-      <p>The aggregate is stored alongside the outliers, because humans are not their average — they are also their exceptions, their bad weeks, their extraordinary moments. The session does not save transcripts. It saves distillations. Verbatim language is preserved only when it is genuinely striking — a phrase that reveals something, an image that is uniquely yours. Those phrases come back to you later, in your own words, about your own life.</p>
+      <p>Onset doesn't keep a transcript of you. It keeps a likeness — the things that stay true, and the things that are moving right now, held the way a portrait holds a life, not the way a file holds facts.</p>
+      <p>Because you are not your average. You are also your exceptions — your best days, your hardest weeks, the moments that never fit the summary. Onset holds those too, and gives them back to you later, in your own words, about your own life.</p>
     </div>
   </div>
 
@@ -685,8 +687,7 @@
       return [bx + ux[k] * a, by + uy[k] * a, d];
     }
     function seg(p, q) {
-      var d = (p[2] + q[2]) / 2, op = 0.34 * (1 - 0.9 * d);
-      if (op < 0.025) return;
+      var d = (p[2] + q[2]) / 2, op = 0.30 - 0.05 * d;   /* edges stay visible — no fade to paper */
       ctx.strokeStyle = 'rgba(' + INK + ',' + op.toFixed(3) + ')';
       ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
     }
