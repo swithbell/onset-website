@@ -837,7 +837,7 @@
       var isz = img.getBoundingClientRect().width || 70;
       var csz = Math.round(isz * 2.9), DPR = Math.min(window.devicePixelRatio || 1, 2.5);
       var cv = document.createElement('canvas');
-      cv.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:' + csz + 'px;height:' + csz + 'px;pointer-events:auto;z-index:0';
+      cv.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:' + csz + 'px;height:' + csz + 'px;pointer-events:auto;touch-action:none;z-index:0';
       cv.width = csz * DPR; cv.height = csz * DPR;
       var ctx = cv.getContext('2d'); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       img.style.position = 'relative'; img.style.zIndex = '1'; img.style.pointerEvents = 'none';
@@ -855,7 +855,7 @@
         if (lastAng !== null) { var dA = a - lastAng; while (dA > Math.PI) dA -= 2 * Math.PI; while (dA < -Math.PI) dA += 2 * Math.PI; swept += dA; if (Math.abs(swept) >= Math.PI * 2 * 0.985) { locked = true; for (var m = 0; m < NB; m++) bins[m] = 1; } }
         lastAng = a;
       }
-      cv.addEventListener('pointerdown', function (e) { var p = loc(e), d = Math.hypot(p.x - cx, p.y - cy); if (d > ensoR * 0.32) return; if (e.pointerType === 'touch') { e.preventDefault(); capId = e.pointerId; try { cv.setPointerCapture(capId); } catch (_) {} } begin(Math.atan2(p.y - cy, p.x - cx)); });
+      cv.addEventListener('pointerdown', function (e) { var p = loc(e), d = Math.hypot(p.x - cx, p.y - cy); if (d > ensoR * (e.pointerType === 'touch' ? 0.5 : 0.32)) return; if (e.pointerType === 'touch') { e.preventDefault(); capId = e.pointerId; try { cv.setPointerCapture(capId); } catch (_) {} } begin(Math.atan2(p.y - cy, p.x - cx)); });
       cv.addEventListener('pointermove', function (e) {
         var p = loc(e), dx = p.x - cx, dy = p.y - cy, d = Math.hypot(dx, dy), a = Math.atan2(dy, dx), touch = e.pointerType === 'touch';
         if (!active) { if (!touch && d < ensoR * 0.32) begin(a); else return; }
