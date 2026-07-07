@@ -855,10 +855,10 @@
         if (lastAng !== null) { var dA = a - lastAng; while (dA > Math.PI) dA -= 2 * Math.PI; while (dA < -Math.PI) dA += 2 * Math.PI; swept += dA; if (Math.abs(swept) >= Math.PI * 2 * 0.985) { locked = true; for (var m = 0; m < NB; m++) bins[m] = 1; } }
         lastAng = a;
       }
-      cv.addEventListener('pointerdown', function (e) { var p = loc(e), d = Math.hypot(p.x - cx, p.y - cy); if (d > ensoR * 0.95) return; if (e.pointerType === 'touch') { e.preventDefault(); capId = e.pointerId; try { cv.setPointerCapture(capId); } catch (_) {} } begin(Math.atan2(p.y - cy, p.x - cx)); });
+      cv.addEventListener('pointerdown', function (e) { var p = loc(e), d = Math.hypot(p.x - cx, p.y - cy); if (d > ensoR * 0.32) return; if (e.pointerType === 'touch') { e.preventDefault(); capId = e.pointerId; try { cv.setPointerCapture(capId); } catch (_) {} } begin(Math.atan2(p.y - cy, p.x - cx)); });
       cv.addEventListener('pointermove', function (e) {
         var p = loc(e), dx = p.x - cx, dy = p.y - cy, d = Math.hypot(dx, dy), a = Math.atan2(dy, dx), touch = e.pointerType === 'touch';
-        if (!active) { if (!touch && d < ensoR * 0.95) begin(a); else return; }
+        if (!active) { if (!touch && d < ensoR * 0.32) begin(a); else return; }
         if (touch) e.preventDefault(); dep(a); wake();
         if (!touch && d > ensoR * 4) { active = false; lastAng = null; }
       });
