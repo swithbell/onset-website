@@ -849,7 +849,7 @@
       var host = document.createElement('span');
       host.style.cssText = 'position:relative;display:inline-flex;line-height:0';
       img.parentNode.insertBefore(host, img); host.appendChild(img);
-      var isz = img.getBoundingClientRect().width || 70;
+      var isz = img.getBoundingClientRect().width || parseInt(window.getComputedStyle(img).width) || 100;
       var csz = Math.round(isz * 2.9), DPR = Math.min(window.devicePixelRatio || 1, 2.5);
       var cv = document.createElement('canvas');
       cv.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:' + csz + 'px;height:' + csz + 'px;pointer-events:auto;touch-action:none;z-index:0';
